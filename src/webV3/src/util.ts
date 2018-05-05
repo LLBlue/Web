@@ -65,6 +65,14 @@ export function dataURItoBlob(dataURI: string) {
 	return new Blob([ab], { type: mimeString });
 }
 
+export function blobToDataURL(blob: Blob): Promise<string> {
+	return new Promise<string>(resolve => {
+		const fileReader = new FileReader();
+		fileReader.onload = () => resolve(fileReader.result);
+		fileReader.readAsDataURL(blob);
+	});
+}
+
 // Thanks to https://gist.github.com/nmsdvid/8807205
 export function debounce(callback: (...args: any[]) => void, time: number) {
 	let interval;

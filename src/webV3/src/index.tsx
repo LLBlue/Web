@@ -20,6 +20,7 @@ import NoteViewerComponent from './containers/NoteViewerContainer';
 import { enableKeyboardShortcuts } from './shortcuts';
 import { OldSyncHandler } from './old-sync/OldSyncHandler';
 import * as QueryString from 'querystring';
+import { DifferenceEngineService } from './sync/DifferenceEngineService';
 
 try {
 	document.domain = MICROPAD_URL.split('//')[1];
