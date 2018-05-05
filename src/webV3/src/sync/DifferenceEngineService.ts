@@ -11,6 +11,7 @@ import { IStoreState } from '../types';
 import { Store } from 'redux';
 
 export class DifferenceEngineService {
+	public readonly docSet = new Automerge.DocSet();
 	private readonly persistentSyncedStorage: LocalForage;
 
 	public static toNotepad(syncedNotepad: ISyncedNotepad): INotepad {
@@ -39,11 +40,12 @@ export class DifferenceEngineService {
 				const assetHashes: AssetHashes = {};
 				hashes.forEach((hash, i) => assetHashes[notepad.notepadAssets[i]] = hash);
 
-				const notepadDoc = Automerge.change(Automerge.init(), state => {
+				const notepadDoc = Automerge.change(await this.getSyncedNotepadFromText(notepad.title), state => {
 					state.notepad = {
-						...JSON.parse(stringify({
+						...JSON.parse(stringify(<ISyncedNotepad> {
 							...notepad,
-							assetHashes
+							assetHashes,
+							guid: 'test'
 						}))
 					};
 				});
@@ -55,13 +57,14 @@ export class DifferenceEngineService {
 	}
 
 	public async getChanges(currentNotepadDoc: any) {
-		const oldNotepad = await this.getSyncedNotepadFromText(currentNotepadDoc.title);
+		const oldNotepad = await this.getSyncedNotepadFromText(currentNotepadDoc.notepad.title);
 		return Automerge.getChanges(oldNotepad, currentNotepadDoc);
 	}
 
 	public async applyChanges(title: string, changes: any) {
 		let currentNotepadDoc: any = await this.getSyncedNotepadFromText(title);
 		currentNotepadDoc = Automerge.applyChanges(currentNotepadDoc, changes);
+		this.docSet.setDoc(currentNotepadDoc.notepad.guid, currentNotepadDoc);
 		await this.persistentSyncedStorage.setItem(currentNotepadDoc.notepad.title, Automerge.save(currentNotepadDoc));
 
 		return currentNotepadDoc;
@@ -75,6 +78,11 @@ export class DifferenceEngineService {
 	}
 
 	private initConnection() {
-		return;
+		const connection = new Automerge.Connection(this.docSet, (msg) => {
+			// Send Message
+			console.log(msg);
+		});
+
+		connection.open();
 	}
 }

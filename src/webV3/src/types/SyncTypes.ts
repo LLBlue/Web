@@ -2,6 +2,7 @@ import { INotepad } from './NotepadTypes';
 
 export interface ISyncedNotepad extends INotepad {
 	assetHashes: AssetHashes;
+	guid: string;
 }
 
 /**
