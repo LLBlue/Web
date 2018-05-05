@@ -44,6 +44,8 @@ export const ASSET_STORAGE = localforage.createInstance({
 		storeName: 'assets'
 });
 
+export const DIFFERENCE_ENGINE_SERVICE = new DifferenceEngineService(store);
+
 Promise.all([NOTEPAD_STORAGE.ready(), ASSET_STORAGE.ready(), localforage.getItem('font size')])
 	.then(([r, r2, fs]: [void, void, string]) => !!fs && store.dispatch(actions.updateDefaultFontSize(fs)))
 	.then(() => store.dispatch(actions.getNotepadList.started(undefined)))
