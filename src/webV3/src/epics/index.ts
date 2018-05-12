@@ -4,8 +4,8 @@ import { storageEpics$ } from './StorageEpics';
 import { helpEpics$ } from './HelpEpics';
 import { searchEpics$ } from './SearchEpics';
 import { noteEpics$ } from './NoteEpics';
-import { explorerEpics$ } from './ExplorerEpics';
 import { syncEpics$ } from './SyncEpics';
+import { ExplorerEpics } from './ExplorerEpics';
 
 const baseEpic$ = combineEpics(
 	notepadEpics$,
@@ -13,8 +13,8 @@ const baseEpic$ = combineEpics(
 	helpEpics$,
 	searchEpics$,
 	noteEpics$,
-	explorerEpics$,
-	syncEpics$
+	syncEpics$,
+	ExplorerEpics.explorerEpics$
 );
 
 export const epicMiddleware = createEpicMiddleware(baseEpic$);
