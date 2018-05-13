@@ -21,6 +21,8 @@ import { enableKeyboardShortcuts } from './shortcuts';
 import { OldSyncHandler } from './old-sync/OldSyncHandler';
 import * as QueryString from 'querystring';
 import { DifferenceEngineService } from './sync/DifferenceEngineService';
+import * as PrintTemplate from 'react-print';
+import PrintViewComponent from './containers/PrintViewContainer';
 
 try {
 	document.domain = MICROPAD_URL.split('//')[1];
@@ -59,7 +61,15 @@ Promise.all([NOTEPAD_STORAGE.ready(), ASSET_STORAGE.ready(), localforage.getItem
 				</div>
 			</div>
 		</Provider>,
-		document.getElementById('root') as HTMLElement
+		document.getElementById('react-no-print') as HTMLElement
+	))
+	.then(() => ReactDOM.render(
+		<PrintTemplate>
+			<Provider store={store}>
+				<PrintViewComponent />
+			</Provider>
+		</PrintTemplate>,
+		document.getElementById('print-mount') as HTMLElement
 	))
 	.then(() => localforage.getItem('hasRunBefore'))
 	.then(async (hasRunBefore: boolean) => {
